@@ -1,0 +1,54 @@
+{
+  "name": "personal-financial-management-frontend",
+  "version": "1.0.0",
+  "description": "Personal Financial Management System Frontend",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "format": "prettier --write src/",
+    "type-check": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "vue": "^3.5.18",
+    "vue-router": "^4.2.5",
+    "pinia": "^2.1.7",
+    "element-plus": "^2.4.4",
+    "@element-plus/icons-vue": "^2.3.1",
+    "axios": "^1.6.2",
+    "vue-i18n": "^9.8.0",
+    "dayjs": "^1.11.10",
+    "lodash-es": "^4.17.21",
+    "file-saver": "^2.0.5",
+    "xlsx": "^0.18.5",
+    "chart.js": "^4.4.0",
+    "vue-chartjs": "^5.2.0",
+    "nprogress": "^0.2.0",
+    "js-cookie": "^3.0.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.2",
+    "@vue/eslint-config-prettier": "^8.0.0",
+    "@vue/eslint-config-typescript": "^12.0.0",
+    "@vue/tsconfig": "^0.5.1",
+    "eslint": "^8.56.0",
+    "eslint-plugin-vue": "^9.19.2",
+    "prettier": "^3.1.1",
+    "typescript": "~5.3.3",
+    "vite": "^5.0.10",
+    "vue-tsc": "^1.8.25",
+    "@types/lodash-es": "^4.17.12",
+    "@types/file-saver": "^2.0.7",
+    "@types/js-cookie": "^3.0.6",
+    "@types/nprogress": "^0.2.3",
+    "sass": "^1.69.7",
+    "unplugin-auto-import": "^0.17.2",
+    "unplugin-vue-components": "^0.26.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}

@@ -122,9 +122,9 @@ npm run dev
 ```
 
 ### 4. Access Application
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/api/docs
+- **Frontend**: http://localhost:3100
+- **Backend API**: http://localhost:8100
+- **API Documentation**: http://localhost:8100/api/docs
 
 ## Business Modules
 

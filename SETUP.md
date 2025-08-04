@@ -104,7 +104,7 @@ CLAUDE_API_KEY=your-claude-api-key
 # Application Configuration
 ENVIRONMENT=development
 HOST=0.0.0.0
-PORT=8000
+PORT=8100
 ```
 
 #### アプリケーション起動
@@ -124,9 +124,9 @@ npm run dev
 ```
 
 ### 5. アクセス確認 (Access Verification)
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/api/docs
+- **Frontend**: http://localhost:3100
+- **Backend API**: http://localhost:8100
+- **API Documentation**: http://localhost:8100/api/docs
 
 ## 本番環境デプロイ (Production Deployment)
 
@@ -326,8 +326,8 @@ net start FinancialBackend
 4. **ポート競合エラー**
    ```bash
    # ポート使用状況確認
-   netstat -ano | findstr :8000
-   netstat -ano | findstr :3000
+   netstat -ano | findstr :8100
+   netstat -ano | findstr :3100
    ```
 
 ### ログ確認方法

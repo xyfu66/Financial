@@ -41,7 +41,7 @@ start_backend() {
     # Install dependencies
     pip install -r requirements.txt
     
-    echo "Backend server starting on http://localhost:8000"
+    echo "Backend server starting on http://localhost:8100"
     python main.py
 }
 
@@ -55,7 +55,7 @@ start_frontend() {
         npm install
     fi
     
-    echo "Frontend server starting on http://localhost:3000"
+    echo "Frontend server starting on http://localhost:3100"
     npm run dev
 }
 
@@ -76,9 +76,9 @@ echo
 echo "========================================"
 echo "System is starting up..."
 echo
-echo "Backend:  http://localhost:8000"
-echo "Frontend: http://localhost:3000"
-echo "API Docs: http://localhost:8000/api/docs"
+echo "Backend:  http://localhost:8100"
+echo "Frontend: http://localhost:3100"
+echo "API Docs: http://localhost:8100/api/docs"
 echo
 echo "Press Ctrl+C to stop the system"
 echo "========================================"

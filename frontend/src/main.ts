@@ -48,7 +48,7 @@ app.use(pinia)
 app.use(router)
 app.use(ElementPlus, {
   size: 'default',
-  zIndex: 3000
+  zIndex: 3100
 })
 app.use(i18n)
 

@@ -1,5 +1,5 @@
 """
-ASGI config for financial_system project.
+ASGI config for Personal Financial Management System.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

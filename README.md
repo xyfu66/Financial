@@ -23,9 +23,9 @@ This system provides:
 
 ### Backend
 - Python 3.10
-- FastAPI RESTful API
+- Django REST Framework
 - JWT Authentication with Refresh Tokens
-- SQL Server 2019 with pyodbc
+- PostgreSQL 14+ with psycopg2
 - Claude API Integration for OCR
 
 ### Security & Features
@@ -73,17 +73,20 @@ Financial/
 ### Prerequisites
 - **Node.js** >= 18.0.0
 - **Python** >= 3.10
-- **SQL Server 2019** (Express Edition supported)
+- **PostgreSQL** >= 14.0
 - **Git**
 
 ### 1. Database Setup
-1. Install SQL Server 2019 and SQL Server Management Studio (SSMS)
-2. Create database using scripts in `/database` directory:
-   ```sql
-   -- Execute in order:
-   -- 1. create_database.sql
-   -- 2. create_business_tables.sql  
-   -- 3. initial_data.sql
+1. Install PostgreSQL 14+ and pgAdmin or psql client
+2. Create database and execute scripts in `/database` directory:
+   ```bash
+   # Create database
+   createdb financial_system
+   
+   # Execute scripts in order:
+   psql -d financial_system -f database/create_database.sql
+   psql -d financial_system -f database/create_business_tables.sql
+   psql -d financial_system -f database/initial_data.sql
    ```
 
 ### 2. Backend Setup
@@ -106,8 +109,14 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your database connection details
 
+# Run database migrations
+python manage.py migrate
+
+# Create superuser
+python manage.py setup_system --create-superuser
+
 # Run application
-python main.py
+python manage.py runserver
 ```
 
 ### 3. Frontend Setup
@@ -122,9 +131,9 @@ npm run dev
 ```
 
 ### 4. Access Application
-- **Frontend**: http://localhost:3100
-- **Backend API**: http://localhost:8100
-- **API Documentation**: http://localhost:8100/api/docs
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/api/docs/
 
 ## Business Modules
 
@@ -165,26 +174,25 @@ npm run dev
 
 ## Production Deployment
 
-### Windows Server Deployment
-1. Install Python 3.10, Node.js 18+, and SQL Server 2019
-2. Clone repository to server (e.g., `C:\inetpub\FinancialSystem\`)
-3. Set up backend as Windows Service using NSSM
-4. Configure IIS for frontend static files
-5. Set up HTTPS with SSL certificates
-
-### Linux Server Deployment
-1. Install Python 3.10, Node.js 18+, and SQL Server for Linux
+### Linux Server Deployment (Recommended)
+1. Install Python 3.10, Node.js 18+, and PostgreSQL 14+
 2. Use systemd for backend service management
 3. Configure Nginx as reverse proxy
 4. Set up SSL certificates with Let's Encrypt
+
+### Windows Server Deployment
+1. Install Python 3.10, Node.js 18+, and PostgreSQL 14+
+2. Set up backend as Windows Service using NSSM
+3. Configure IIS for frontend static files
+4. Set up HTTPS with SSL certificates
 
 Detailed deployment instructions are available in [SETUP.md](SETUP.md).
 
 ## Development
 
 ### Backend Development
-- FastAPI with automatic API documentation
-- SQLAlchemy ORM with SQL Server
+- Django REST Framework with automatic API documentation
+- Django ORM with PostgreSQL
 - Comprehensive error handling and logging
 - Modular architecture for easy extension
 
@@ -199,7 +207,7 @@ Detailed deployment instructions are available in [SETUP.md](SETUP.md).
 ```bash
 # Backend tests
 cd backend
-pytest
+python manage.py test
 
 # Frontend tests
 cd frontend

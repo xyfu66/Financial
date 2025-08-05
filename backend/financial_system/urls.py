@@ -1,53 +1,49 @@
 """
-URL configuration for financial_system project.
+Personal Financial Management System URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
-
-# API Router
-router = DefaultRouter()
-
-# API URL patterns
-api_patterns = [
-    # Authentication endpoints
-    path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('auth/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    
-    # App-specific API endpoints
-    path('users/', include('apps.users.urls')),
-    path('business/', include('apps.business.urls')),
-    path('system/', include('apps.system.urls')),
-    path('files/', include('apps.files.urls')),
-    path('audit/', include('apps.audit.urls')),
-    
-    # Router URLs
-    path('', include(router.urls)),
-]
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+from rest_framework_simplejwt.views import TokenRefreshView
+from accounts.views import CustomTokenObtainPairView
 
 urlpatterns = [
-    # Admin interface
+    # Admin
     path('admin/', admin.site.urls),
     
-    # API endpoints
-    path('api/v1/', include(api_patterns)),
+    # API Documentation
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     
-    # Health check endpoint
-    path('health/', include('apps.system.urls')),
+    # Authentication
+    path('api/auth/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
-    # API documentation (if needed)
-    path('api-auth/', include('rest_framework.urls')),
+    # API v1
+    path('api/v1/accounts/', include('accounts.urls')),
+    path('api/v1/financial/', include('financial.urls')),
+    path('api/v1/notifications/', include('notifications.urls')),
+    path('api/v1/audit/', include('audit.urls')),
+    path('api/v1/ocr/', include('ocr_service.urls')),
+    
+    # Health check
+    path('health/', include('financial_system.health_urls')),
 ]
 
 # Serve media files in development
@@ -56,6 +52,6 @@ if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # Admin site customization
-admin.site.site_header = "個人財務管理システム"
-admin.site.site_title = "Financial System Admin"
-admin.site.index_title = "システム管理"
+admin.site.site_header = "Personal Financial Management System"
+admin.site.site_title = "Financial Management Admin"
+admin.site.index_title = "Welcome to Financial Management Administration"

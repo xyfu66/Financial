@@ -9,8 +9,8 @@ A comprehensive financial management system for Japanese individual business own
 ## 技術スタック (Technology Stack)
 
 ### Backend
-- **Python 3.10** - FastAPI RESTful API
-- **SQL Server 2019** - Database
+- **Python 3.10** - Django RESTful API
+- **PostgreSQL 14+** - Database
 - **JWT Authentication** - Security
 - **Claude API** - OCR Processing
 
@@ -26,13 +26,14 @@ A comprehensive financial management system for Japanese individual business own
 ### Development Environment
 - **Node.js** >= 18.0.0
 - **Python** >= 3.10
-- **SQL Server 2019** (Express Edition可)
+- **PostgreSQL** >= 14.0
 - **Git**
+- **Windows 11**
 
 ### Production Environment
-- **Windows Server** 2019/2022 (推奨)
-- **SQL Server 2019**
-- **IIS** または **Nginx** (リバースプロキシ用)
+- **Linux Server** (Ubuntu 20.04+ 推奨) または **Windows Server** 2019/2022
+- **PostgreSQL** >= 14.0
+- **Nginx** (リバースプロキシ用)
 - **4GB RAM** minimum (8GB recommended)
 - **20GB** disk space minimum
 
@@ -44,25 +45,28 @@ git clone <repository-url>
 cd FinancialSystem/Financial
 ```
 
-### 2. SQL Server セットアップ (SQL Server Setup)
+### 2. PostgreSQL セットアップ (PostgreSQL Setup)
 
-#### SQL Server のインストール
-1. **SQL Server 2019 Express** をダウンロード・インストール
-2. **SQL Server Management Studio (SSMS)** をインストール
-3. SQL Server を起動し、接続を確認
+#### PostgreSQL のインストール
+1. **PostgreSQL 14+** をダウンロード・インストール
+2. **pgAdmin** または **psql** クライアントをインストール
+3. PostgreSQL サービスを起動し、接続を確認
 
 #### データベース作成
-1. SSMS を開き、SQL Server に接続
-2. 以下のスクリプトを順番に実行：
+1. PostgreSQL に接続し、データベースを作成：
    ```sql
-   -- 1. データベース作成
-   -- database/create_database.sql を実行
+   CREATE DATABASE financial_system;
+   ```
+2. 以下のスクリプトを順番に実行：
+   ```bash
+   # 1. データベーススキーマ作成
+   psql -d financial_system -f database/create_database.sql
    
-   -- 2. ビジネステーブル作成
-   -- database/create_business_tables.sql を実行
+   # 2. ビジネステーブル作成
+   psql -d financial_system -f database/create_business_tables.sql
    
-   -- 3. 初期データ投入
-   -- database/initial_data.sql を実行
+   # 3. 初期データ投入
+   psql -d financial_system -f database/initial_data.sql
    ```
 
 ### 3. バックエンドセットアップ (Backend Setup)
@@ -87,29 +91,61 @@ cp .env.example .env
 
 #### .env ファイル設定
 ```env
-# Database Configuration
-DB_SERVER=localhost
-DB_NAME=FinancialManagement
-DB_USER=sa
-DB_PASSWORD=your-strong-password
-
-# Security Configuration
+# Django Configuration
 SECRET_KEY=your-super-secret-key-change-in-production
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-REFRESH_TOKEN_EXPIRE_DAYS=7
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+
+# Database Configuration
+DATABASE_URL=postgresql://postgres:your-strong-password@localhost:5432/financial_system
+DB_NAME=financial_system
+DB_USER=postgres
+DB_PASSWORD=your-strong-password
+DB_HOST=localhost
+DB_PORT=5432
 
 # Claude API Configuration
 CLAUDE_API_KEY=your-claude-api-key
 
-# Application Configuration
-ENVIRONMENT=development
-HOST=0.0.0.0
-PORT=8100
+# JWT Configuration
+JWT_SECRET_KEY=your-jwt-secret-key
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
+JWT_REFRESH_TOKEN_EXPIRE_DAYS=7
+
+# Redis Configuration (for Celery)
+REDIS_URL=redis://localhost:6379/0
+CELERY_BROKER_URL=redis://localhost:6379/0
+CELERY_RESULT_BACKEND=redis://localhost:6379/0
+
+# File Upload Configuration
+MAX_UPLOAD_SIZE=10485760  # 10MB
+MEDIA_ROOT=media/
+STATIC_ROOT=staticfiles/
 ```
 
-#### アプリケーション起動
+#### Django プロジェクト初期化 (注意: 手動実行が必要)
+以下のコマンドは手動で実行してください：
+
 ```bash
-python main.py
+# Django プロジェクト作成 (backend/ ディレクトリ内で実行)
+django-admin startproject financial_system .
+
+# Django アプリケーション作成
+python manage.py startapp accounts
+python manage.py startapp financial
+python manage.py startapp notifications
+python manage.py startapp audit
+python manage.py startapp ocr_service
+
+# データベースマイグレーション
+python manage.py makemigrations
+python manage.py migrate
+
+# 管理者ユーザー作成
+python manage.py createsuperuser
+
+# 開発サーバー起動
+python manage.py runserver
 ```
 
 ### 4. フロントエンドセットアップ (Frontend Setup)
@@ -124,20 +160,22 @@ npm run dev
 ```
 
 ### 5. アクセス確認 (Access Verification)
-- **Frontend**: http://localhost:3100
-- **Backend API**: http://localhost:8100
-- **API Documentation**: http://localhost:8100/api/docs
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/api/docs/
 
 ## 本番環境デプロイ (Production Deployment)
 
 ### Windows Server での展開
 
 #### 1. 環境準備
-```powershell
-# Python 3.10 インストール
-# Node.js 18+ インストール
-# SQL Server 2019 インストール
-# IIS インストール (オプション)
+```bash
+# Ubuntu/Debian の場合
+sudo apt update
+sudo apt install python3.10 python3.10-venv python3-pip nodejs npm postgresql postgresql-contrib nginx
+
+# CentOS/RHEL の場合
+sudo yum install python3.10 nodejs npm postgresql-server postgresql-contrib nginx
 ```
 
 #### 2. アプリケーション配置
@@ -258,11 +296,12 @@ python create_admin.py
 ## メンテナンス (Maintenance)
 
 ### バックアップ
-```sql
--- データベースバックアップ
-BACKUP DATABASE FinancialManagement 
-TO DISK = 'C:\Backup\FinancialManagement_backup.bak'
-WITH FORMAT, INIT;
+```bash
+# PostgreSQL データベースバックアップ
+pg_dump -h localhost -U postgres -d financial_system > backup_$(date +%Y%m%d).sql
+
+# 復元
+psql -h localhost -U postgres -d financial_system < backup_20231201.sql
 ```
 
 ### ログ監視
@@ -299,11 +338,11 @@ net start FinancialBackend
 
 1. **データベース接続エラー**
    ```bash
-   # SQL Server サービス確認
-   services.msc で SQL Server サービスを確認
+   # PostgreSQL サービス確認
+   sudo systemctl status postgresql
    
    # 接続テスト
-   sqlcmd -S localhost -U sa -P your-password
+   psql -h localhost -U postgres -d financial_system
    ```
 
 2. **Python 依存関係エラー**
@@ -326,8 +365,8 @@ net start FinancialBackend
 4. **ポート競合エラー**
    ```bash
    # ポート使用状況確認
-   netstat -ano | findstr :8100
-   netstat -ano | findstr :3100
+   sudo netstat -tlnp | grep :8000
+   sudo netstat -tlnp | grep :5173
    ```
 
 ### ログ確認方法
@@ -350,14 +389,15 @@ eventvwr.msc
 
 ## パフォーマンス最適化 (Performance Optimization)
 
-### SQL Server 設定
+### PostgreSQL 設定
 ```sql
--- インデックス最適化
-EXEC sp_updatestats;
-
 -- 統計情報更新
-UPDATE STATISTICS T_Dat_Incomes;
-UPDATE STATISTICS T_Dat_Expenses;
+ANALYZE T_Dat_Incomes;
+ANALYZE T_Dat_Expenses;
+
+-- インデックス再構築
+REINDEX TABLE T_Dat_Incomes;
+REINDEX TABLE T_Dat_Expenses;
 ```
 
 ### IIS 設定

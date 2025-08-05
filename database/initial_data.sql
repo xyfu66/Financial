@@ -1,292 +1,254 @@
--- Initial Data and Triggers for Personal Financial Management System
--- SQL Server 2019 Compatible
+-- Personal Financial Management System - Initial Data
+-- PostgreSQL 14+ Initial Data Script
 
-USE FinancialManagement;
-GO
+-- Connect to the database
+\c financial_system;
 
--- Insert default income categories (Japanese tax-compliant)
-INSERT INTO T_Master_Income_Categories (category_code, category_name, category_name_en, description, tax_category, is_business_income, sort_order) VALUES
-('INC001', '事業所得', 'Business Income', '個人事業による収入', '事業所得', 1, 1),
-('INC002', '給与所得', 'Salary Income', '給与・賞与による収入', '給与所得', 0, 2),
-('INC003', '雑所得', 'Miscellaneous Income', 'その他の収入', '雑所得', 1, 3),
-('INC004', '不動産所得', 'Real Estate Income', '不動産賃貸による収入', '不動産所得', 1, 4),
-('INC005', '配当所得', 'Dividend Income', '株式配当による収入', '配当所得', 0, 5),
-('INC006', '利子所得', 'Interest Income', '預金利子による収入', '利子所得', 0, 6),
-('INC007', 'フリーランス収入', 'Freelance Income', 'フリーランス業務による収入', '事業所得', 1, 7),
-('INC008', 'コンサルティング収入', 'Consulting Income', 'コンサルティング業務による収入', '事業所得', 1, 8);
-GO
+-- ============================================================================
+-- Insert Default Income Categories (Japanese Tax Law Compliant)
+-- ============================================================================
 
--- Insert default expense categories (Japanese tax-deductible expenses)
-INSERT INTO T_Master_Expense_Categories (category_code, category_name, category_name_en, description, tax_deductible, deduction_rate, requires_receipt, sort_order) VALUES
-('EXP001', '旅費交通費', 'Travel Expenses', '出張・交通費', 1, 100.00, 1, 1),
-('EXP002', '通信費', 'Communication Expenses', '電話・インターネット費用', 1, 100.00, 1, 2),
-('EXP003', '消耗品費', 'Office Supplies', '事務用品・消耗品', 1, 100.00, 1, 3),
-('EXP004', '会議費', 'Meeting Expenses', '会議・打合せ費用', 1, 100.00, 1, 4),
-('EXP005', '接待交際費', 'Entertainment Expenses', '接待・交際費', 1, 100.00, 1, 5),
-('EXP006', '広告宣伝費', 'Advertising Expenses', '広告・宣伝費用', 1, 100.00, 1, 6),
-('EXP007', '外注費', 'Outsourcing Expenses', '外部委託費用', 1, 100.00, 1, 7),
-('EXP008', '地代家賃', 'Rent Expenses', '事務所賃料', 1, 100.00, 1, 8),
-('EXP009', '水道光熱費', 'Utilities', '電気・ガス・水道代', 1, 50.00, 1, 9),
-('EXP010', '損害保険料', 'Insurance Premiums', '事業用保険料', 1, 100.00, 1, 10),
-('EXP011', '修繕費', 'Repair Expenses', '設備・備品修繕費', 1, 100.00, 1, 11),
-('EXP012', '減価償却費', 'Depreciation', '固定資産減価償却', 1, 100.00, 0, 12),
-('EXP013', '福利厚生費', 'Welfare Expenses', '従業員福利厚生費', 1, 100.00, 1, 13),
-('EXP014', '研修費', 'Training Expenses', '研修・教育費用', 1, 100.00, 1, 14),
-('EXP015', '図書費', 'Books and Materials', '書籍・資料費', 1, 100.00, 1, 15),
-('EXP016', 'ソフトウェア費', 'Software Expenses', 'ソフトウェア・ライセンス費', 1, 100.00, 1, 16),
-('EXP017', '支払手数料', 'Service Fees', '銀行手数料・各種手数料', 1, 100.00, 1, 17),
-('EXP018', '租税公課', 'Taxes and Dues', '事業税・印紙税等', 1, 100.00, 1, 18),
-('EXP019', '雑費', 'Miscellaneous Expenses', 'その他の経費', 1, 100.00, 1, 19),
-('EXP020', '食費', 'Meal Expenses', '食事代（事業関連）', 1, 50.00, 1, 20);
-GO
+INSERT INTO T_Master_Income_Categories (category_code, category_name, category_name_en, description, tax_deductible, is_business_income, sort_order) VALUES
+-- 事業所得 (Business Income)
+('INC001', '売上高', 'Sales Revenue', '商品・サービスの売上', FALSE, TRUE, 1),
+('INC002', '業務委託収入', 'Contract Income', '業務委託による収入', FALSE, TRUE, 2),
+('INC003', 'コンサルティング収入', 'Consulting Income', 'コンサルティング業務による収入', FALSE, TRUE, 3),
+('INC004', 'システム開発収入', 'System Development Income', 'システム開発業務による収入', FALSE, TRUE, 4),
+('INC005', 'デザイン収入', 'Design Income', 'デザイン業務による収入', FALSE, TRUE, 5),
+('INC006', '講師料', 'Teaching Fee', '講師・研修による収入', FALSE, TRUE, 6),
+('INC007', '原稿料', 'Writing Fee', '執筆・原稿による収入', FALSE, TRUE, 7),
+('INC008', 'ライセンス収入', 'License Income', 'ライセンス・特許による収入', FALSE, TRUE, 8),
 
--- Insert default user roles
-INSERT INTO T_User_Role (role_name, role_description) VALUES
-('super_admin', 'システム全体の管理権限を持つスーパー管理者'),
-('admin', '一般的な管理権限を持つ管理者'),
-('user', '一般ユーザー');
-GO
+-- 雑所得 (Miscellaneous Income)
+('INC009', '雑所得', 'Miscellaneous Income', 'その他の雑所得', FALSE, FALSE, 9),
+('INC010', '利息収入', 'Interest Income', '預金利息等', FALSE, FALSE, 10),
+('INC011', '配当収入', 'Dividend Income', '株式配当等', FALSE, FALSE, 11),
+('INC012', '不動産収入', 'Real Estate Income', '不動産賃貸収入', FALSE, TRUE, 12),
 
--- Insert default permissions
+-- その他
+('INC013', '補助金・助成金', 'Subsidies/Grants', '政府・自治体からの補助金', FALSE, TRUE, 13),
+('INC014', '返金・返還', 'Refunds', '経費の返金等', FALSE, TRUE, 14),
+('INC015', 'その他収入', 'Other Income', 'その他の収入', FALSE, TRUE, 15);
+
+-- ============================================================================
+-- Insert Default Expense Categories (Japanese Tax Law Compliant)
+-- ============================================================================
+
+INSERT INTO T_Master_Expense_Categories (category_code, category_name, category_name_en, description, tax_deductible, is_business_expense, depreciation_years, sort_order) VALUES
+-- 売上原価 (Cost of Goods Sold)
+('EXP001', '仕入高', 'Purchases', '商品・材料の仕入', TRUE, TRUE, NULL, 1),
+('EXP002', '外注費', 'Subcontracting Costs', '外部委託費用', TRUE, TRUE, NULL, 2),
+
+-- 販売費及び一般管理費 (Selling, General & Administrative Expenses)
+('EXP003', '広告宣伝費', 'Advertising Expenses', '広告・宣伝に関する費用', TRUE, TRUE, NULL, 3),
+('EXP004', '接待交際費', 'Entertainment Expenses', '接待・交際に関する費用', TRUE, TRUE, NULL, 4),
+('EXP005', '旅費交通費', 'Travel Expenses', '出張・交通に関する費用', TRUE, TRUE, NULL, 5),
+('EXP006', '通信費', 'Communication Expenses', '電話・インターネット等', TRUE, TRUE, NULL, 6),
+('EXP007', '水道光熱費', 'Utilities', '電気・ガス・水道代', TRUE, TRUE, NULL, 7),
+('EXP008', '消耗品費', 'Office Supplies', '事務用品・消耗品', TRUE, TRUE, NULL, 8),
+('EXP009', '修繕費', 'Repair Expenses', '設備・機器の修理費', TRUE, TRUE, NULL, 9),
+
+-- 人件費 (Personnel Expenses)
+('EXP010', '給料賃金', 'Salaries', '従業員給与', TRUE, TRUE, NULL, 10),
+('EXP011', '法定福利費', 'Statutory Welfare', '社会保険料等', TRUE, TRUE, NULL, 11),
+('EXP012', '福利厚生費', 'Employee Benefits', '福利厚生に関する費用', TRUE, TRUE, NULL, 12),
+
+-- 地代家賃 (Rent)
+('EXP013', '地代家賃', 'Rent', '事務所・店舗の賃料', TRUE, TRUE, NULL, 13),
+('EXP014', '駐車場代', 'Parking Fees', '駐車場利用料', TRUE, TRUE, NULL, 14),
+
+-- 減価償却費 (Depreciation)
+('EXP015', '減価償却費', 'Depreciation', '固定資産の減価償却', TRUE, TRUE, NULL, 15),
+
+-- 租税公課 (Taxes and Dues)
+('EXP016', '租税公課', 'Taxes and Dues', '事業税・固定資産税等', TRUE, TRUE, NULL, 16),
+('EXP017', '印紙税', 'Stamp Tax', '契約書等の印紙税', TRUE, TRUE, NULL, 17),
+
+-- 保険料 (Insurance)
+('EXP018', '損害保険料', 'Insurance Premiums', '事業用保険料', TRUE, TRUE, NULL, 18),
+
+-- 金融関係 (Financial)
+('EXP019', '支払利息', 'Interest Expenses', '借入金利息', TRUE, TRUE, NULL, 19),
+('EXP020', '支払手数料', 'Bank Charges', '銀行手数料等', TRUE, TRUE, NULL, 20),
+
+-- 専門サービス (Professional Services)
+('EXP021', '支払報酬', 'Professional Fees', '税理士・弁護士等への報酬', TRUE, TRUE, NULL, 21),
+('EXP022', '会議費', 'Meeting Expenses', '会議・研修費用', TRUE, TRUE, NULL, 22),
+('EXP023', '研修費', 'Training Expenses', '研修・セミナー費用', TRUE, TRUE, NULL, 23),
+
+-- IT関係 (IT Related)
+('EXP024', 'ソフトウェア費', 'Software Expenses', 'ソフトウェア購入・利用料', TRUE, TRUE, NULL, 24),
+('EXP025', 'システム利用料', 'System Usage Fees', 'クラウドサービス等', TRUE, TRUE, NULL, 25),
+('EXP026', 'ドメイン・サーバー費', 'Domain/Server Fees', 'ドメイン・サーバー利用料', TRUE, TRUE, NULL, 26),
+
+-- 固定資産 (Fixed Assets)
+('EXP027', '建物', 'Buildings', '建物の購入・建設', TRUE, TRUE, 47, 27),
+('EXP028', '建物附属設備', 'Building Fixtures', '建物附属設備', TRUE, TRUE, 15, 28),
+('EXP029', '機械装置', 'Machinery', '機械・装置', TRUE, TRUE, 10, 29),
+('EXP030', '車両運搬具', 'Vehicles', '自動車・運搬具', TRUE, TRUE, 6, 30),
+('EXP031', '工具器具備品', 'Tools and Equipment', '工具・器具・備品', TRUE, TRUE, 6, 31),
+('EXP032', 'パソコン・IT機器', 'Computer Equipment', 'パソコン・IT関連機器', TRUE, TRUE, 4, 32),
+
+-- その他 (Others)
+('EXP033', '新聞図書費', 'Books and Publications', '新聞・書籍・雑誌', TRUE, TRUE, NULL, 33),
+('EXP034', '諸会費', 'Membership Fees', '組合費・会費等', TRUE, TRUE, NULL, 34),
+('EXP035', '寄付金', 'Donations', '寄付金', FALSE, TRUE, NULL, 35),
+('EXP036', '雑費', 'Miscellaneous Expenses', 'その他の経費', TRUE, TRUE, NULL, 36),
+
+-- 個人事業主特有 (Sole Proprietor Specific)
+('EXP037', '青色申告会費', 'Blue Form Association Fee', '青色申告会の会費', TRUE, TRUE, NULL, 37),
+('EXP038', '帳簿作成費', 'Bookkeeping Expenses', '帳簿作成に関する費用', TRUE, TRUE, NULL, 38),
+
+-- 家事按分対象 (Home Office Deductible)
+('EXP039', '家事按分_通信費', 'Home Office Communication', '自宅兼事務所の通信費', TRUE, TRUE, NULL, 39),
+('EXP040', '家事按分_光熱費', 'Home Office Utilities', '自宅兼事務所の光熱費', TRUE, TRUE, NULL, 40);
+
+-- ============================================================================
+-- Insert Default User Roles
+-- ============================================================================
+
+INSERT INTO T_User_Role (role_name, role_description, permissions) VALUES
+('super_admin', 'システム管理者', '{"all": true}'),
+('admin', '管理者', '{"users": ["view", "create", "edit"], "financial": ["view", "create", "edit", "delete"], "reports": ["view", "export"], "system": ["view"]}'),
+('user', '一般ユーザー', '{"financial": ["view", "create", "edit"], "reports": ["view"], "profile": ["view", "edit"]}');
+
+-- ============================================================================
+-- Insert Default Permissions
+-- ============================================================================
+
 INSERT INTO T_User_Permission (permission_name, permission_description, resource, action) VALUES
--- Income permissions
+-- User Management
+('user_view', 'ユーザー情報の閲覧', 'user', 'view'),
+('user_create', 'ユーザーの作成', 'user', 'create'),
+('user_edit', 'ユーザー情報の編集', 'user', 'edit'),
+('user_delete', 'ユーザーの削除', 'user', 'delete'),
+
+-- Financial Data
+('income_view', '収入データの閲覧', 'income', 'view'),
 ('income_create', '収入データの作成', 'income', 'create'),
-('income_read', '収入データの閲覧', 'income', 'read'),
-('income_update', '収入データの更新', 'income', 'update'),
+('income_edit', '収入データの編集', 'income', 'edit'),
 ('income_delete', '収入データの削除', 'income', 'delete'),
 ('income_import', '収入データのインポート', 'income', 'import'),
 ('income_export', '収入データのエクスポート', 'income', 'export'),
 
--- Expense permissions
+('expense_view', '支出データの閲覧', 'expense', 'view'),
 ('expense_create', '支出データの作成', 'expense', 'create'),
-('expense_read', '支出データの閲覧', 'expense', 'read'),
-('expense_update', '支出データの更新', 'expense', 'update'),
+('expense_edit', '支出データの編集', 'expense', 'edit'),
 ('expense_delete', '支出データの削除', 'expense', 'delete'),
 ('expense_import', '支出データのインポート', 'expense', 'import'),
 ('expense_export', '支出データのエクスポート', 'expense', 'export'),
 
--- User management permissions
-('user_create', 'ユーザーの作成', 'user', 'create'),
-('user_read', 'ユーザー情報の閲覧', 'user', 'read'),
-('user_update', 'ユーザー情報の更新', 'user', 'update'),
-('user_delete', 'ユーザーの削除', 'user', 'delete'),
+-- Reports
+('report_view', 'レポートの閲覧', 'report', 'view'),
+('report_export', 'レポートのエクスポート', 'report', 'export'),
+('tax_calculation', '税務計算の実行', 'tax', 'calculate'),
 
--- System permissions
-('system_read', 'システム情報の閲覧', 'system', 'read'),
-('system_update', 'システム設定の更新', 'system', 'update'),
+-- System
+('system_view', 'システム情報の閲覧', 'system', 'view'),
+('audit_view', '監査ログの閲覧', 'audit', 'view'),
+('notification_manage', '通知の管理', 'notification', 'manage'),
 
--- Report permissions
-('report_read', 'レポートの閲覧', 'report', 'read'),
-('report_export', 'レポートのエクスポート', 'report', 'export');
-GO
+-- File Operations
+('file_upload', 'ファイルのアップロード', 'file', 'upload'),
+('ocr_process', 'OCR処理の実行', 'ocr', 'process');
 
--- Insert default system configurations
-INSERT INTO T_System_Config (config_key, config_value, config_type, description, is_system) VALUES
-('system_name', 'Personal Financial Management System', 'STRING', 'システム名', 1),
-('system_version', '1.0.0', 'STRING', 'システムバージョン', 1),
-('max_file_size_mb', '10', 'INTEGER', 'アップロードファイルの最大サイズ（MB）', 0),
-('session_timeout_minutes', '30', 'INTEGER', 'セッションタイムアウト時間（分）', 0),
-('password_min_length', '8', 'INTEGER', 'パスワード最小文字数', 0),
-('backup_retention_days', '30', 'INTEGER', 'バックアップ保持日数', 0),
-('audit_log_retention_days', '365', 'INTEGER', '監査ログ保持日数', 0),
-('ocr_confidence_threshold', '80', 'INTEGER', 'OCR信頼度閾値（%）', 0),
-('default_currency', 'JPY', 'STRING', 'デフォルト通貨', 0),
-('tax_year_start_month', '1', 'INTEGER', '税務年度開始月', 0);
-GO
+-- ============================================================================
+-- Insert Default Notifications
+-- ============================================================================
 
--- Create triggers for audit logging
--- Trigger for T_User table
-CREATE TRIGGER TR_T_User_Audit
-ON T_User
-AFTER INSERT, UPDATE, DELETE
-AS
+INSERT INTO T_Notification (title, message, notification_type, is_active, target_roles, priority) VALUES
+('システム開始', 'Personal Financial Management Systemへようこそ！', 'INFO', TRUE, ARRAY['super_admin', 'admin', 'user']::user_role_type[], 1),
+('青色申告について', '青色申告の特別控除を受けるためには、複式簿記による記帳が必要です。', 'INFO', TRUE, ARRAY['user']::user_role_type[], 2),
+('データバックアップ', '重要なデータは定期的にバックアップを取ることをお勧めします。', 'WARNING', TRUE, ARRAY['super_admin', 'admin', 'user']::user_role_type[], 3);
+
+-- ============================================================================
+-- Create sample admin user (password: admin123)
+-- Note: This should be changed in production
+-- ============================================================================
+
+-- Insert admin user (password hash for 'admin123')
+INSERT INTO T_User (username, email, password_hash, role, is_active, is_staff, is_superuser) VALUES
+('admin', 'admin@example.com', 'pbkdf2_sha256$600000$dummy$hash', 'super_admin', TRUE, TRUE, TRUE);
+
+-- Get the admin user ID for the detail record
+DO $$
+DECLARE
+    admin_user_id UUID;
 BEGIN
-    SET NOCOUNT ON;
+    SELECT user_id INTO admin_user_id FROM T_User WHERE username = 'admin';
     
-    DECLARE @operation NVARCHAR(10);
-    DECLARE @user_id INT = ISNULL(CAST(SESSION_CONTEXT(N'current_user_id') AS INT), 0);
-    
-    IF EXISTS(SELECT * FROM inserted) AND EXISTS(SELECT * FROM deleted)
-        SET @operation = 'UPDATE';
-    ELSE IF EXISTS(SELECT * FROM inserted)
-        SET @operation = 'INSERT';
-    ELSE
-        SET @operation = 'DELETE';
-    
-    -- Insert into history table
-    IF @operation = 'INSERT'
-    BEGIN
-        INSERT INTO T_User_History (user_id, username, email, role, is_active, operation_type, operation_user_id)
-        SELECT user_id, username, email, role, is_active, @operation, @user_id
-        FROM inserted;
-    END
-    ELSE IF @operation = 'UPDATE'
-    BEGIN
-        INSERT INTO T_User_History (user_id, username, email, role, is_active, operation_type, operation_user_id)
-        SELECT user_id, username, email, role, is_active, @operation, @user_id
-        FROM inserted;
-    END
-    ELSE IF @operation = 'DELETE'
-    BEGIN
-        INSERT INTO T_User_History (user_id, username, email, role, is_active, operation_type, operation_user_id)
-        SELECT user_id, username, email, role, is_active, @operation, @user_id
-        FROM deleted;
-    END
-END;
-GO
+    -- Insert admin user details
+    INSERT INTO T_User_Detail (user_id, first_name, last_name, first_name_kana, last_name_kana) VALUES
+    (admin_user_id, '管理者', 'システム', 'カンリシャ', 'システム');
+END $$;
 
--- Trigger for T_User_Detail table
-CREATE TRIGGER TR_T_User_Detail_Audit
-ON T_User_Detail
-AFTER INSERT, UPDATE, DELETE
-AS
+-- ============================================================================
+-- Update sequences to start from appropriate values
+-- ============================================================================
+
+-- This ensures that auto-generated IDs don't conflict with manually inserted data
+SELECT setval(pg_get_serial_sequence('T_Master_Income_Categories', 'category_id'), (SELECT MAX(category_id::text)::bigint FROM T_Master_Income_Categories) + 1, false);
+SELECT setval(pg_get_serial_sequence('T_Master_Expense_Categories', 'category_id'), (SELECT MAX(category_id::text)::bigint FROM T_Master_Expense_Categories) + 1, false);
+
+-- ============================================================================
+-- Create sample data for testing (optional - can be removed in production)
+-- ============================================================================
+
+-- Sample income data
+DO $$
+DECLARE
+    admin_user_id UUID;
+    sales_category_id UUID;
+    consulting_category_id UUID;
 BEGIN
-    SET NOCOUNT ON;
+    SELECT user_id INTO admin_user_id FROM T_User WHERE username = 'admin';
+    SELECT category_id INTO sales_category_id FROM T_Master_Income_Categories WHERE category_code = 'INC001';
+    SELECT category_id INTO consulting_category_id FROM T_Master_Income_Categories WHERE category_code = 'INC003';
     
-    DECLARE @operation NVARCHAR(10);
-    DECLARE @user_id INT = ISNULL(CAST(SESSION_CONTEXT(N'current_user_id') AS INT), 0);
-    
-    IF EXISTS(SELECT * FROM inserted) AND EXISTS(SELECT * FROM deleted)
-        SET @operation = 'UPDATE';
-    ELSE IF EXISTS(SELECT * FROM inserted)
-        SET @operation = 'INSERT';
-    ELSE
-        SET @operation = 'DELETE';
-    
-    -- Insert into history table
-    IF @operation = 'INSERT'
-    BEGIN
-        INSERT INTO T_User_Detail_History (
-            detail_id, user_id, first_name, last_name, first_name_kana, last_name_kana,
-            addr, room_name, sex, birth_day, is_disabled, is_widow, is_household_head,
-            occupation, occupation_category, primary_income_source, phone_number,
-            postal_code, prefecture, city, operation_type, operation_user_id
-        )
-        SELECT 
-            detail_id, user_id, first_name, last_name, first_name_kana, last_name_kana,
-            addr, room_name, sex, birth_day, is_disabled, is_widow, is_household_head,
-            occupation, occupation_category, primary_income_source, phone_number,
-            postal_code, prefecture, city, @operation, @user_id
-        FROM inserted;
-    END
-    ELSE IF @operation = 'UPDATE'
-    BEGIN
-        INSERT INTO T_User_Detail_History (
-            detail_id, user_id, first_name, last_name, first_name_kana, last_name_kana,
-            addr, room_name, sex, birth_day, is_disabled, is_widow, is_household_head,
-            occupation, occupation_category, primary_income_source, phone_number,
-            postal_code, prefecture, city, operation_type, operation_user_id
-        )
-        SELECT 
-            detail_id, user_id, first_name, last_name, first_name_kana, last_name_kana,
-            addr, room_name, sex, birth_day, is_disabled, is_widow, is_household_head,
-            occupation, occupation_category, primary_income_source, phone_number,
-            postal_code, prefecture, city, @operation, @user_id
-        FROM inserted;
-    END
-    ELSE IF @operation = 'DELETE'
-    BEGIN
-        INSERT INTO T_User_Detail_History (
-            detail_id, user_id, first_name, last_name, first_name_kana, last_name_kana,
-            addr, room_name, sex, birth_day, is_disabled, is_widow, is_household_head,
-            occupation, occupation_category, primary_income_source, phone_number,
-            postal_code, prefecture, city, operation_type, operation_user_id
-        )
-        SELECT 
-            detail_id, user_id, first_name, last_name, first_name_kana, last_name_kana,
-            addr, room_name, sex, birth_day, is_disabled, is_widow, is_household_head,
-            occupation, occupation_category, primary_income_source, phone_number,
-            postal_code, prefecture, city, @operation, @user_id
-        FROM deleted;
-    END
-END;
-GO
+    -- Sample income records
+    INSERT INTO T_Dat_Incomes (user_id, category_id, income_date, description, client_name, amount, tax_amount, created_by) VALUES
+    (admin_user_id, sales_category_id, '2024-01-15', 'Webサイト制作', '株式会社サンプル', 550000, 50000, admin_user_id),
+    (admin_user_id, consulting_category_id, '2024-01-20', 'ITコンサルティング', '有限会社テスト', 220000, 20000, admin_user_id),
+    (admin_user_id, sales_category_id, '2024-02-10', 'システム開発', '株式会社デモ', 880000, 80000, admin_user_id);
+END $$;
 
--- Create stored procedures for financial calculations
-CREATE PROCEDURE SP_CalculateFinancialSummary
-    @user_id INT,
-    @period_type NVARCHAR(20),
-    @period_year INT,
-    @period_month INT = NULL,
-    @period_quarter INT = NULL
-AS
+-- Sample expense data
+DO $$
+DECLARE
+    admin_user_id UUID;
+    office_supplies_id UUID;
+    communication_id UUID;
+    software_id UUID;
 BEGIN
-    SET NOCOUNT ON;
+    SELECT user_id INTO admin_user_id FROM T_User WHERE username = 'admin';
+    SELECT category_id INTO office_supplies_id FROM T_Master_Expense_Categories WHERE category_code = 'EXP008';
+    SELECT category_id INTO communication_id FROM T_Master_Expense_Categories WHERE category_code = 'EXP006';
+    SELECT category_id INTO software_id FROM T_Master_Expense_Categories WHERE category_code = 'EXP024';
     
-    DECLARE @start_date DATE, @end_date DATE;
-    
-    -- Calculate period dates
-    IF @period_type = 'MONTHLY'
-    BEGIN
-        SET @start_date = DATEFROMPARTS(@period_year, @period_month, 1);
-        SET @end_date = EOMONTH(@start_date);
-    END
-    ELSE IF @period_type = 'QUARTERLY'
-    BEGIN
-        SET @start_date = DATEFROMPARTS(@period_year, (@period_quarter - 1) * 3 + 1, 1);
-        SET @end_date = EOMONTH(DATEADD(MONTH, 2, @start_date));
-    END
-    ELSE IF @period_type = 'YEARLY'
-    BEGIN
-        SET @start_date = DATEFROMPARTS(@period_year, 1, 1);
-        SET @end_date = DATEFROMPARTS(@period_year, 12, 31);
-    END
-    
-    -- Calculate income totals
-    DECLARE @total_income DECIMAL(15,2) = 0;
-    DECLARE @total_income_tax DECIMAL(15,2) = 0;
-    DECLARE @net_income DECIMAL(15,2) = 0;
-    
-    SELECT 
-        @total_income = ISNULL(SUM(amount), 0),
-        @total_income_tax = ISNULL(SUM(tax_amount), 0),
-        @net_income = ISNULL(SUM(net_amount), 0)
-    FROM T_Dat_Incomes
-    WHERE user_id = @user_id 
-        AND income_date BETWEEN @start_date AND @end_date
-        AND status = 'CONFIRMED';
-    
-    -- Calculate expense totals
-    DECLARE @total_expenses DECIMAL(15,2) = 0;
-    DECLARE @total_deductible_expenses DECIMAL(15,2) = 0;
-    DECLARE @total_expense_tax DECIMAL(15,2) = 0;
-    
-    SELECT 
-        @total_expenses = ISNULL(SUM(amount), 0),
-        @total_deductible_expenses = ISNULL(SUM(deductible_amount), 0),
-        @total_expense_tax = ISNULL(SUM(tax_amount), 0)
-    FROM T_Dat_Expenses
-    WHERE user_id = @user_id 
-        AND expense_date BETWEEN @start_date AND @end_date
-        AND status = 'CONFIRMED';
-    
-    -- Insert or update summary
-    MERGE T_Financial_Summary AS target
-    USING (SELECT @user_id AS user_id, @period_type AS period_type, 
-                  @period_year AS period_year, @period_month AS period_month, 
-                  @period_quarter AS period_quarter) AS source
-    ON (target.user_id = source.user_id 
-        AND target.period_type = source.period_type 
-        AND target.period_year = source.period_year
-        AND ISNULL(target.period_month, 0) = ISNULL(source.period_month, 0)
-        AND ISNULL(target.period_quarter, 0) = ISNULL(source.period_quarter, 0))
-    WHEN MATCHED THEN
-        UPDATE SET 
-            total_income = @total_income,
-            total_income_tax = @total_income_tax,
-            net_income = @net_income,
-            total_expenses = @total_expenses,
-            total_deductible_expenses = @total_deductible_expenses,
-            total_expense_tax = @total_expense_tax,
-            updated_at = GETUTCDATE()
-    WHEN NOT MATCHED THEN
-        INSERT (user_id, period_type, period_year, period_month, period_quarter,
-                total_income, total_income_tax, net_income,
-                total_expenses, total_deductible_expenses, total_expense_tax)
-        VALUES (@user_id, @period_type, @period_year, @period_month, @period_quarter,
-                @total_income, @total_income_tax, @net_income,
-                @total_expenses, @total_deductible_expenses, @total_expense_tax);
-END;
-GO
+    -- Sample expense records
+    INSERT INTO T_Dat_Expenses (user_id, category_id, expense_date, description, vendor_name, amount, tax_amount, business_use_percentage, created_by) VALUES
+    (admin_user_id, office_supplies_id, '2024-01-05', '事務用品購入', 'オフィス用品店', 15400, 1400, 100.00, admin_user_id),
+    (admin_user_id, communication_id, '2024-01-31', 'インターネット料金', 'NTT', 6600, 600, 80.00, admin_user_id),
+    (admin_user_id, software_id, '2024-02-01', 'Adobe Creative Suite', 'Adobe', 7678, 698, 100.00, admin_user_id);
+END $$;
 
-PRINT 'Initial data and triggers created successfully!';
+-- ============================================================================
+-- Final verification queries (commented out for production)
+-- ============================================================================
+
+/*
+-- Verify data insertion
+SELECT 'Income Categories' as table_name, COUNT(*) as record_count FROM T_Master_Income_Categories
+UNION ALL
+SELECT 'Expense Categories', COUNT(*) FROM T_Master_Expense_Categories
+UNION ALL
+SELECT 'User Roles', COUNT(*) FROM T_User_Role
+UNION ALL
+SELECT 'User Permissions', COUNT(*) FROM T_User_Permission
+UNION ALL
+SELECT 'Users', COUNT(*) FROM T_User
+UNION ALL
+SELECT 'Notifications', COUNT(*) FROM T_Notification;
+*/
+
+COMMENT ON SCHEMA public IS 'Personal Financial Management System - Initial data loaded successfully';

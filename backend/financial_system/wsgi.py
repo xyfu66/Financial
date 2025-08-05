@@ -1,5 +1,5 @@
 """
-WSGI config for financial_system project.
+WSGI config for Personal Financial Management System.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

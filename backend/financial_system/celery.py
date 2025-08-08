@@ -33,7 +33,7 @@ app.conf.beat_schedule = {
     },
 }
 
-app.conf.timezone = settings.TIME_ZONE
+app.conf.timezone = 'Asia/Tokyo'
 
 @app.task(bind=True)
 def debug_task(self):

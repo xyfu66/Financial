@@ -4,7 +4,7 @@ Admin configuration for accounts app
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
-from .models import User, UserDetail, UserRole, UserPermission
+from .models import User, UserDetail, UserRoleModel, UserPermission
 
 
 @admin.register(User)
@@ -69,9 +69,9 @@ class UserDetailAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at']
 
 
-@admin.register(UserRole)
+@admin.register(UserRoleModel)
 class UserRoleAdmin(admin.ModelAdmin):
-    """Admin configuration for UserRole model"""
+    """Admin configuration for UserRoleModel model"""
     
     list_display = ['role_name', 'is_active', 'created_at']
     list_filter = ['is_active', 'created_at']

@@ -2,7 +2,7 @@
 Custom permissions for accounts app
 """
 from rest_framework import permissions
-from .models import UserRole as UserRoleChoices
+from .models import UserRole
 
 
 class IsOwnerOrAdmin(permissions.BasePermission):
@@ -30,7 +30,7 @@ class IsSuperAdminOrAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         return (
             request.user.is_authenticated and
-            request.user.role in [UserRoleChoices.SUPER_ADMIN, UserRoleChoices.ADMIN]
+            request.user.role in [UserRole.SUPER_ADMIN, UserRole.ADMIN]
         )
 
 
@@ -42,7 +42,7 @@ class IsSuperAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         return (
             request.user.is_authenticated and
-            request.user.role == UserRoleChoices.SUPER_ADMIN
+            request.user.role == UserRole.SUPER_ADMIN
         )
 
 
@@ -67,11 +67,11 @@ class CanManageUsers(permissions.BasePermission):
             return False
         
         # Super admins can do everything
-        if request.user.role == UserRoleChoices.SUPER_ADMIN:
+        if request.user.role == UserRole.SUPER_ADMIN:
             return True
         
         # Admins can manage regular users
-        if request.user.role == UserRoleChoices.ADMIN:
+        if request.user.role == UserRole.ADMIN:
             return True
         
         return False
@@ -81,12 +81,12 @@ class CanManageUsers(permissions.BasePermission):
             return False
         
         # Super admins can manage anyone
-        if request.user.role == UserRoleChoices.SUPER_ADMIN:
+        if request.user.role == UserRole.SUPER_ADMIN:
             return True
         
         # Admins can manage regular users but not other admins or super admins
-        if request.user.role == UserRoleChoices.ADMIN:
-            return obj.role == UserRoleChoices.USER
+        if request.user.role == UserRole.ADMIN:
+            return obj.role == UserRole.USER
         
         return False
 
@@ -167,7 +167,7 @@ class CanViewAuditLogs(permissions.BasePermission):
     def has_permission(self, request, view):
         return (
             request.user.is_authenticated and
-            request.user.role in [UserRoleChoices.SUPER_ADMIN, UserRoleChoices.ADMIN]
+            request.user.role in [UserRole.SUPER_ADMIN, UserRole.ADMIN]
         )
 
 

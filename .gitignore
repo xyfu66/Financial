@@ -136,3 +136,4 @@ dist
 .pnp.*
 /backend/venv
 /backend/config/__pycache__
+__pycache__

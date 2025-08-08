@@ -186,7 +186,7 @@ class UserDetail(models.Model):
         return ""
 
 
-class UserRole(models.Model):
+class UserRoleModel(models.Model):
     """
     Role management table
     Maps to T_User_Role table in PostgreSQL

@@ -5,7 +5,7 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
-from .models import User, UserDetail, UserRole, UserPermission
+from .models import User, UserDetail, UserRoleModel, UserPermission
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
@@ -125,10 +125,10 @@ class PasswordChangeSerializer(serializers.Serializer):
 
 
 class UserRoleSerializer(serializers.ModelSerializer):
-    """Serializer for UserRole model"""
+    """Serializer for UserRoleModel model"""
     
     class Meta:
-        model = UserRole
+        model = UserRoleModel
         fields = [
             'id', 'role_name', 'role_description', 'permissions',
             'is_active', 'created_at', 'updated_at'

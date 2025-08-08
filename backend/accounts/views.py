@@ -10,7 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import update_session_auth_hash
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema, OpenApiResponse
-from .models import User, UserDetail, UserRole, UserPermission
+from .models import User, UserDetail, UserRoleModel, UserPermission
 from .serializers import (
     UserSerializer, UserDetailSerializer, UserProfileSerializer,
     UserDetailUpdateSerializer, PasswordChangeSerializer,
@@ -196,7 +196,7 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class UserRoleListCreateView(generics.ListCreateAPIView):
     """View for listing and creating user roles"""
-    queryset = UserRole.objects.filter(is_active=True)
+    queryset = UserRoleModel.objects.filter(is_active=True)
     serializer_class = UserRoleSerializer
     permission_classes = [IsSuperAdminOrAdmin]
 
@@ -220,7 +220,7 @@ class UserRoleListCreateView(generics.ListCreateAPIView):
 
 class UserRoleDetailView(generics.RetrieveUpdateDestroyAPIView):
     """View for user role detail operations"""
-    queryset = UserRole.objects.all()
+    queryset = UserRoleModel.objects.all()
     serializer_class = UserRoleSerializer
     permission_classes = [IsSuperAdminOrAdmin]
 
